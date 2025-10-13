@@ -1,0 +1,112 @@
+import React, { memo, useMemo } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
+import type { Message } from "./types";
+
+interface MessagesProps {
+  messages: Message[];
+  selectedFont: string;
+}
+
+// Memoized individual message component
+const MessageItem = memo(({ message, selectedFont, index }: { message: Message; selectedFont: string; index: number }) => {
+  // Memoize the markdown components to prevent recreation on every render
+  const markdownComponents = useMemo(() => ({
+    p: ({children}: any) => <p className="text-sm leading-[1.6] mb-3 last:mb-0" style={{ fontFamily: selectedFont }}>{children}</p>,
+    h1: ({children}: any) => <h1 className="text-xl font-semibold mb-3 mt-4 first:mt-0">{children}</h1>,
+    h2: ({children}: any) => <h2 className="text-lg font-semibold mb-2 mt-4 first:mt-0">{children}</h2>,
+    h3: ({children}: any) => <h3 className="text-base font-semibold mb-2 mt-3 first:mt-0">{children}</h3>,
+    ul: ({children}: any) => <ul className="list-disc pl-4 mb-3 space-y-1">{children}</ul>,
+    ol: ({children}: any) => <ol className="list-decimal pl-4 mb-3 space-y-1">{children}</ol>,
+    li: ({children}: any) => <li className="text-sm leading-[1.6]" style={{ fontFamily: selectedFont }}>{children}</li>,
+    blockquote: ({children}: any) => <blockquote className={`border-l-3 ${message.role === 'user' ? 'border-white/30' : 'border-[#e8e6e3] dark:border-[#484848]'} pl-3 italic my-3 opacity-80`}>{children}</blockquote>,
+    code: ({inline, children}: any) => 
+      inline ? 
+        <code className={`${message.role === 'user' ? 'bg-white/20' : 'bg-[#f6f6f4] dark:bg-[#363636]'} px-1.5 py-0.5 rounded text-sm font-mono`}>{children}</code> :
+        <pre className={`${message.role === 'user' ? 'bg-white/10' : 'bg-[#f6f6f4] dark:bg-[#363636]'} p-3 rounded-lg overflow-x-auto mb-3 border ${message.role === 'user' ? 'border-white/20' : 'border-[#e8e6e3] dark:border-[#484848]'}`}><code className="text-sm font-mono">{children}</code></pre>,
+    a: ({href, children}: any) => <a href={href} className={`${message.role === 'user' ? 'text-white underline' : 'text-[#2c2c2c] dark:text-gray-100 underline'} hover:opacity-80`}>{children}</a>,
+    hr: () => <hr className={`my-4 ${message.role === 'user' ? 'border-white/30' : 'border-[#e8e6e3] dark:border-[#484848]'}`} />,
+    table: ({children}: any) => <table className="border-collapse w-full mb-3 text-sm">{children}</table>,
+    th: ({children}: any) => <th className={`border ${message.role === 'user' ? 'border-white/30 bg-white/10' : 'border-[#e8e6e3] dark:border-[#484848] bg-[#f6f6f4] dark:bg-[#363636]'} px-3 py-2 font-medium text-left`}>{children}</th>,
+    td: ({children}: any) => <td className={`border ${message.role === 'user' ? 'border-white/30' : 'border-[#e8e6e3] dark:border-[#484848]'} px-3 py-2`}>{children}</td>,
+    br: () => <br className="block" />,
+  }), [selectedFont, message.role]);
+  
+  return (
+    <div className={`flex ${
+      message.role === 'user' ? 'justify-end' : 'justify-start'
+    }`}>
+      <div className={`max-w-[85%] ${
+        message.role === 'user' 
+          ? 'bg-[#2c2c2c] dark:bg-[#424242] text-white rounded-2xl rounded-br-md' 
+          : 'bg-white dark:bg-[#424242] text-[#2c2c2c] dark:text-gray-100 rounded-2xl rounded-bl-md border border-[#e8e6e3] dark:border-[#484848]'
+      } px-4 py-3 shadow-sm`}>
+        {/* Message header */}
+        <div className="flex items-center gap-2 mb-2">
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium ${
+            message.role === 'user' 
+              ? 'bg-white/20 text-white' 
+              : 'bg-[#2c2c2c]/10 dark:bg-white/10 text-[#2c2c2c] dark:text-gray-100'
+          }`}>
+            {message.role === 'user' ? 'Y' : 'M'}
+          </div>
+          <span className={`text-xs font-medium ${
+            message.role === 'user' 
+              ? 'text-white/80' 
+              : 'text-[#737373] dark:text-gray-400'
+          }`}>
+            {message.role === 'user' ? 'You' : 'MDaude'}
+          </span>
+        </div>
+        {/* Message content */}
+        <div className="prose prose-sm max-w-none">
+          <ReactMarkdown 
+            remarkPlugins={[remarkGfm, remarkBreaks]}
+            components={markdownComponents}
+          >
+            {message.content}
+          </ReactMarkdown>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+MessageItem.displayName = 'MessageItem';
+
+export const Messages = memo(({ messages, selectedFont }: MessagesProps) => {
+  // Memoize empty state to prevent re-renders
+  const emptyState = useMemo(() => (
+    <div className="flex items-center justify-center h-full">
+      <div className="text-center max-w-md mx-auto px-6">
+        <div className="w-16 h-16 bg-[#2c2c2c] dark:bg-gray-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-medium text-[#2c2c2c] dark:text-gray-100 mb-2">Welcome to MDaude</h2>
+        <p className="text-[#737373] dark:text-gray-400 text-sm leading-relaxed">Open a markdown file to start viewing and editing it with real-time updates.</p>
+      </div>
+    </div>
+  ), []);
+
+  return (
+    <div className="flex-1 overflow-y-auto">
+      {messages.length === 0 ? emptyState : (
+        <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
+          {messages.map((message, index) => (
+            <MessageItem 
+              key={`${message.role}-${index}-${message.content.length}`} 
+              message={message} 
+              selectedFont={selectedFont} 
+              index={index} 
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+});
+
+Messages.displayName = 'Messages';
