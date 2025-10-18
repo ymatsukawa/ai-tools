@@ -16,9 +16,3 @@ export interface FileState {
   lastModified: number;
   fileSize: number;
 }
-
-export interface BackgroundState {
-  backgroundImages: string[];
-  currentBackgroundIndex: number;
-  imageDirectoryHandle: any;
-}

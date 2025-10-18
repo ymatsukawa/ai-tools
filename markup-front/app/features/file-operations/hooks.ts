@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
 import { createFileMessage, createAssistantMessage } from '../../entities/file/model';
-import { writeToFile, downloadFile, openFileWithSystemAPI, openImageDirectoryWithSystemAPI } from './api';
+import { writeToFile, downloadFile, openFileWithSystemAPI } from './api';
 import type { Message } from '../../shared/types/common';
 
 export function useFileOperations(
@@ -73,81 +72,4 @@ export function useFileOperations(
   };
 
   return { handleFileOpen, handleSendMessage };
-}
-
-export function useImageDirectoryOperations(
-  setImageDirectoryHandle: React.Dispatch<React.SetStateAction<any>>,
-  setBackgroundImages: React.Dispatch<React.SetStateAction<string[]>>,
-  setCurrentBackgroundIndex: React.Dispatch<React.SetStateAction<number>>
-) {
-  const handleImageDirectoryOpen = async (): Promise<void> => {
-    try {
-      const handle = await openImageDirectoryWithSystemAPI();
-      setImageDirectoryHandle(handle);
-    } catch (error) {
-      console.error('Image directory open error:', error);
-    }
-  };
-
-  const loadImagesFromDirectory = async (imageDirectoryHandle: any) => {
-    if (!imageDirectoryHandle) return;
-    
-    try {
-      const imageFiles: { name: string; handle: any }[] = [];
-      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
-      
-      // First, collect all image file handles
-      for await (const [name, handle] of imageDirectoryHandle.entries()) {
-        if (handle.kind === 'file') {
-          const extension = name.toLowerCase().substring(name.lastIndexOf('.'));
-          if (imageExtensions.includes(extension)) {
-            imageFiles.push({ name, handle });
-          }
-        }
-      }
-      
-      // Lazy loading: Create URLs only for the first few images
-      const INITIAL_LOAD_COUNT = 3;
-      const imageUrls: string[] = [];
-      
-      for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, imageFiles.length); i++) {
-        const file = await imageFiles[i].handle.getFile();
-        const url = URL.createObjectURL(file);
-        imageUrls.push(url);
-      }
-      
-      // Store remaining handles for lazy loading
-      const remainingHandles = imageFiles.slice(INITIAL_LOAD_COUNT).map(f => f.handle);
-      
-      setBackgroundImages(imageUrls);
-      if (imageUrls.length > 0) {
-        setCurrentBackgroundIndex(0);
-      }
-      
-      // Lazy load remaining images in background
-      if (remainingHandles.length > 0) {
-        setTimeout(async () => {
-          const additionalUrls: string[] = [];
-          
-          for (const handle of remainingHandles) {
-            try {
-              const file = await handle.getFile();
-              const url = URL.createObjectURL(file);
-              additionalUrls.push(url);
-            } catch (error) {
-              console.warn('Failed to load image:', error);
-            }
-          }
-          
-          if (additionalUrls.length > 0) {
-            setBackgroundImages(prev => [...prev, ...additionalUrls]);
-          }
-        }, 500); // Load after 500ms
-      }
-    } catch (error) {
-      console.error('Error loading images from directory:', error);
-    }
-  };
-
-  return { handleImageDirectoryOpen, loadImagesFromDirectory };
 }

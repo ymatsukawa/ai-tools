@@ -1,20 +1,18 @@
 import type { Route } from "./+types/home";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Messages } from "../components/home/Messages";
 import { SettingsModal } from "../components/home/SettingsModal";
 
 // FSD imports
 import { fontOptions } from "../shared/config/fonts";
-import type { Message, FileState, BackgroundState } from "../shared/types/common";
+import type { Message, FileState } from "../shared/types/common";
 import { useDebounce, useThrottle } from "../shared/hooks/debounce";
 import { useFilePolling } from "../entities/file/hooks";
 import { createFileMessage, createAssistantMessage } from "../entities/file/model";
-import { useBackgroundRotation, useImagePreloader, useImageCleanup } from "../entities/background/hooks";
-import { useFileOperations, useImageDirectoryOperations } from "../features/file-operations/hooks";
+import { useFileOperations } from "../features/file-operations/hooks";
 import { useContentEditing } from "../features/content-editing/hooks";
 import { useSettings } from "../features/settings/hooks";
 import { Sidebar } from "../widgets/sidebar/ui";
-import { Background } from "../widgets/background/ui";
 import { ContentEditor } from "../widgets/content-editor/ui";
 
 
@@ -31,11 +29,6 @@ export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(true);
-
-  // Background State
-  const [backgroundImages, setBackgroundImages] = useState<string[]>([]);
-  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
-  const [imageDirectoryHandle, setImageDirectoryHandle] = useState<any>(null);
 
   // File State
   const [currentFile, setCurrentFile] = useState<File | null>(null);
@@ -89,20 +82,6 @@ export default function Home() {
     setFileSize,
     setIsStreaming
   );
-
-  const { handleImageDirectoryOpen, loadImagesFromDirectory } = useImageDirectoryOperations(
-    setImageDirectoryHandle,
-    setBackgroundImages,
-    setCurrentBackgroundIndex
-  );
-
-  useEffect(() => {
-    loadImagesFromDirectory(imageDirectoryHandle);
-  }, [imageDirectoryHandle]);
-
-  useBackgroundRotation(backgroundImages, setCurrentBackgroundIndex);
-  useImagePreloader(backgroundImages, currentBackgroundIndex);
-  useImageCleanup(backgroundImages);
 
   useFilePolling(
     fileHandle,
@@ -166,23 +145,12 @@ export default function Home() {
     };
   }, [handleKeyDown]);
 
-  // Memoize current background image to prevent unnecessary re-renders
-  const currentBackgroundImage = useMemo(() =>
-    backgroundImages[currentBackgroundIndex],
-    [backgroundImages, currentBackgroundIndex]
-  );
-
   return (
     <div className="h-screen bg-[#faf9f7] dark:bg-[#2d2d2d] flex relative">
-      <Background currentBackgroundImage={currentBackgroundImage} />
-
       <Sidebar
         sidebarVisible={sidebarVisible}
         currentFile={currentFile}
-        imageDirectoryHandle={imageDirectoryHandle}
-        backgroundImages={backgroundImages}
         onFileOpen={handleFileOpen}
-        onImageDirectoryOpen={handleImageDirectoryOpen}
         onSettingsOpen={handleSettingsOpen}
       />
 

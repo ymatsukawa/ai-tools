@@ -28,13 +28,9 @@ export const openFileWithSystemAPI = async (): Promise<{ handle: any, file: File
     }],
     multiple: false
   });
-  
+
   const file = await handle.getFile();
   const content = await file.text();
-  
-  return { handle, file, content };
-};
 
-export const openImageDirectoryWithSystemAPI = async (): Promise<any> => {
-  return await (window as any).showDirectoryPicker();
+  return { handle, file, content };
 };
