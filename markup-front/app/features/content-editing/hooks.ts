@@ -13,18 +13,6 @@ export function useContentEditing(
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState("");
 
-  const handleContentClick = (): void => {
-    if (currentFileContent && !isEditing) {
-      setIsEditing(true);
-      setEditContent(currentFileContent);
-      setTimeout(() => {
-        window.scrollTo({
-          top: document.body.scrollHeight
-        });
-      }, 0);
-    }
-  };
-
   const handleContentBlur = async (): Promise<void> => {
     if (isEditing && editContent !== currentFileContent) {
       setCurrentFileContent(editContent);
@@ -58,7 +46,6 @@ export function useContentEditing(
   return {
     isEditing,
     editContent,
-    handleContentClick,
     handleContentBlur,
     handleContentChange,
     setIsEditing,

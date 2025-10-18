@@ -43,7 +43,6 @@ export default function Home() {
   const {
     isEditing,
     editContent,
-    handleContentClick,
     handleContentBlur,
     handleContentChange,
     setIsEditing,
@@ -125,17 +124,9 @@ export default function Home() {
       event.preventDefault();
       if (isEditing) {
         handleContentBlur();
-      } else if (currentFileContent) {
-        setIsEditing(true);
-        setEditContent(currentFileContent);
-        setTimeout(() => {
-          window.scrollTo({
-            top: document.body.scrollHeight
-          });
-        }, 0);
       }
     }
-  }, [toggleSidebar, scrollToBottom, isEditing, handleContentBlur, currentFileContent, setIsEditing, setEditContent]);
+  }, [toggleSidebar, scrollToBottom, isEditing, handleContentBlur]);
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -185,7 +176,7 @@ export default function Home() {
             }}
           />
         ) : (
-          <div onClick={handleContentClick} className="cursor-text">
+          <div>
             <Messages
               messages={messages}
               selectedFont={selectedFont}
