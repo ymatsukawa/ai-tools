@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { writeToFile } from '../file-operations/api';
 import { createFileMessage, createAssistantMessage } from '../../entities/file/model';
 import type { Message } from '../../shared/types/common';
@@ -13,14 +13,14 @@ export function useContentEditing(
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState("");
 
-  const handleContentBlur = async (): Promise<void> => {
+  const handleContentBlur = useCallback(async (): Promise<void> => {
     if (isEditing && editContent !== currentFileContent) {
       setCurrentFileContent(editContent);
-      
+
       if (fileHandle && currentFile) {
         try {
           await writeToFile(fileHandle, editContent);
-          
+
           setMessages([
             createFileMessage(currentFile.name),
             createAssistantMessage(editContent)
@@ -31,17 +31,19 @@ export function useContentEditing(
       }
     }
     setIsEditing(false);
-    
-    setTimeout(() => {
-      window.scrollTo({
-        top: document.body.scrollHeight
-      });
-    }, 0);
-  };
 
-  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+    });
+  }, [isEditing, editContent, currentFileContent, fileHandle, currentFile, setCurrentFileContent, setMessages]);
+
+  const handleContentChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>): void => {
     setEditContent(event.target.value);
-  };
+  }, []);
 
   return {
     isEditing,

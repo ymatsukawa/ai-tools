@@ -1,7 +1,10 @@
 import type { Route } from "./+types/home";
-import { useState, useEffect, useCallback } from "react";
-import { Messages } from "../components/home/Messages";
-import { SettingsModal } from "../components/home/SettingsModal";
+import { useState, useEffect, useCallback, lazy, Suspense, useMemo } from "react";
+
+// Lazy load heavy components
+const Messages = lazy(() => import("../components/home/Messages").then(m => ({ default: m.Messages })));
+const SettingsModal = lazy(() => import("../components/home/SettingsModal").then(m => ({ default: m.SettingsModal })));
+const ContentEditor = lazy(() => import("../widgets/content-editor/ui").then(m => ({ default: m.ContentEditor })));
 
 // FSD imports
 import { fontOptions } from "../shared/config/fonts";
@@ -12,7 +15,6 @@ import { createFileMessage, createAssistantMessage } from "../entities/file/mode
 import { useFileOperations } from "../features/file-operations/hooks";
 import { useContentEditing } from "../features/content-editing/hooks";
 import { useSettings } from "../features/settings/hooks";
-import { ContentEditor } from "../widgets/content-editor/ui";
 
 
 export function meta({ }: Route.MetaArgs) {
@@ -38,6 +40,9 @@ export default function Home() {
   // Feature hooks
   const { showSettings, selectedFont, handleSettingsClose, handleSettingsOpen, handleFontChange } = useSettings();
 
+  // Memoize font options to prevent re-creation
+  const memoizedFontOptions = useMemo(() => fontOptions, []);
+
   const {
     isEditing,
     editContent,
@@ -53,19 +58,20 @@ export default function Home() {
     setMessages
   );
 
-  // Debounce file content updates to prevent excessive re-renders
-  const handleFileContentChange = useDebounce(
-    useCallback((newContent: string, file: File) => {
-      setCurrentFileContent(newContent);
-      setLastModified(file.lastModified);
-      setFileSize(file.size);
+  // Memoize file content change handler (debounce wrapper applies debouncing)
+  const handleFileContentChangeBase = useCallback((newContent: string, file: File) => {
+    setCurrentFileContent(newContent);
+    setLastModified(file.lastModified);
+    setFileSize(file.size);
 
-      setMessages([
-        createFileMessage(file.name),
-        createAssistantMessage(newContent)
-      ]);
-    }, [])
-    , 300);
+    setMessages([
+      createFileMessage(file.name),
+      createAssistantMessage(newContent)
+    ]);
+  }, []);
+
+  // Debounce file content updates to prevent excessive re-renders
+  const handleFileContentChange = useDebounce(handleFileContentChangeBase, 300);
 
   const { handleFileOpen, handleSendMessage } = useFileOperations(
     fileHandle,
@@ -168,39 +174,49 @@ export default function Home() {
         </div>
 
         {isEditing ? (
-          <ContentEditor
-            editContent={editContent}
-            selectedFont={selectedFont}
-            onChange={handleContentChange}
-            onBlur={handleContentBlur}
-            onKeyDown={(event) => {
-              if (event.ctrlKey && event.key === 'j') {
-                event.preventDefault();
-                const textarea = event.target as HTMLTextAreaElement;
-                textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
-                textarea.scrollTop = textarea.scrollHeight;
-              }
-            }}
-          />
+          <Suspense fallback={<div className="flex-1 flex items-center justify-center">
+            <div className="text-gray-400">Loading editor...</div>
+          </div>}>
+            <ContentEditor
+              editContent={editContent}
+              selectedFont={selectedFont}
+              onChange={handleContentChange}
+              onBlur={handleContentBlur}
+              onKeyDown={(event) => {
+                if (event.ctrlKey && event.key === 'j') {
+                  event.preventDefault();
+                  const textarea = event.target as HTMLTextAreaElement;
+                  textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+                  textarea.scrollTop = textarea.scrollHeight;
+                }
+              }}
+            />
+          </Suspense>
         ) : (
           <div>
-            <Messages
-              messages={messages}
-              selectedFont={selectedFont}
-            />
+            <Suspense fallback={<div className="flex-1 flex items-center justify-center">
+              <div className="text-gray-400">Loading messages...</div>
+            </div>}>
+              <Messages
+                messages={messages}
+                selectedFont={selectedFont}
+              />
+            </Suspense>
             <div style={{ height: '33vh' }} />
           </div>
         )}
 
       </div>
 
-      <SettingsModal
-        showSettings={showSettings}
-        selectedFont={selectedFont}
-        fontOptions={fontOptions}
-        onClose={handleSettingsClose}
-        onFontChange={handleFontChange}
-      />
+      <Suspense fallback={null}>
+        <SettingsModal
+          showSettings={showSettings}
+          selectedFont={selectedFont}
+          fontOptions={memoizedFontOptions}
+          onClose={handleSettingsClose}
+          onFontChange={handleFontChange}
+        />
+      </Suspense>
     </div>
   );
 }

@@ -79,7 +79,7 @@ export function useFilePolling(
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     if (fileHandle) {
       console.log('Starting intelligent file polling');
       currentDelay.current = 1000; // Reset delay
@@ -87,7 +87,8 @@ export function useFilePolling(
     } else {
       console.log('Stopping file polling');
     }
-    
+
+    // Consolidated cleanup
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (pollingInterval.current) {
@@ -96,12 +97,4 @@ export function useFilePolling(
       }
     };
   }, [fileHandle, scheduleNextCheck]);
-
-  useEffect(() => {
-    return () => {
-      if (pollingInterval.current) {
-        clearInterval(pollingInterval.current);
-      }
-    };
-  }, []);
 }
