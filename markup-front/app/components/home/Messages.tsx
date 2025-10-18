@@ -20,48 +20,39 @@ const MessageItem = memo(({ message, selectedFont, index }: { message: Message; 
     ul: ({children}: any) => <ul className="list-disc pl-4 mb-3 space-y-1">{children}</ul>,
     ol: ({children}: any) => <ol className="list-decimal pl-4 mb-3 space-y-1">{children}</ol>,
     li: ({children}: any) => <li className="text-sm leading-[1.6]" style={{ fontFamily: selectedFont }}>{children}</li>,
-    blockquote: ({children}: any) => <blockquote className={`border-l-3 ${message.role === 'user' ? 'border-white/30' : 'border-[#e8e6e3] dark:border-[#484848]'} pl-3 italic my-3 opacity-80`}>{children}</blockquote>,
-    code: ({inline, children}: any) => 
-      inline ? 
-        <code className={`${message.role === 'user' ? 'bg-white/20' : 'bg-[#f6f6f4] dark:bg-[#363636]'} px-1.5 py-0.5 rounded text-sm font-mono`}>{children}</code> :
-        <pre className={`${message.role === 'user' ? 'bg-white/10' : 'bg-[#f6f6f4] dark:bg-[#363636]'} p-3 rounded-lg overflow-x-auto mb-3 border ${message.role === 'user' ? 'border-white/20' : 'border-[#e8e6e3] dark:border-[#484848]'}`}><code className="text-sm font-mono">{children}</code></pre>,
-    a: ({href, children}: any) => <a href={href} className={`${message.role === 'user' ? 'text-white underline' : 'text-[#2c2c2c] dark:text-gray-100 underline'} hover:opacity-80`}>{children}</a>,
-    hr: () => <hr className={`my-4 ${message.role === 'user' ? 'border-white/30' : 'border-[#e8e6e3] dark:border-[#484848]'}`} />,
+    blockquote: ({children}: any) => <blockquote className="border-l-3 border-[#e8e6e3] dark:border-[#484848] pl-3 italic my-3 opacity-80">{children}</blockquote>,
+    code: ({inline, children}: any) =>
+      inline ?
+        <code className="bg-[#f6f6f4] dark:bg-[#363636] px-1.5 py-0.5 rounded text-sm font-mono">{children}</code> :
+        <pre className="bg-[#f6f6f4] dark:bg-[#363636] p-3 rounded-lg overflow-x-auto mb-3 border border-[#e8e6e3] dark:border-[#484848]"><code className="text-sm font-mono">{children}</code></pre>,
+    a: ({href, children}: any) => <a href={href} className="text-[#2c2c2c] dark:text-gray-100 underline hover:opacity-80">{children}</a>,
+    hr: () => <hr className="my-4 border-[#e8e6e3] dark:border-[#484848]" />,
     table: ({children}: any) => <table className="border-collapse w-full mb-3 text-sm">{children}</table>,
-    th: ({children}: any) => <th className={`border ${message.role === 'user' ? 'border-white/30 bg-white/10' : 'border-[#e8e6e3] dark:border-[#484848] bg-[#f6f6f4] dark:bg-[#363636]'} px-3 py-2 font-medium text-left`}>{children}</th>,
-    td: ({children}: any) => <td className={`border ${message.role === 'user' ? 'border-white/30' : 'border-[#e8e6e3] dark:border-[#484848]'} px-3 py-2`}>{children}</td>,
+    th: ({children}: any) => <th className="border border-[#e8e6e3] dark:border-[#484848] bg-[#f6f6f4] dark:bg-[#363636] px-3 py-2 font-medium text-left">{children}</th>,
+    td: ({children}: any) => <td className="border border-[#e8e6e3] dark:border-[#484848] px-3 py-2">{children}</td>,
     br: () => <br className="block" />,
-  }), [selectedFont, message.role]);
+  }), [selectedFont]);
   
+  // Only render assistant messages (file content)
+  if (message.role === 'user') {
+    return null;
+  }
+
   return (
-    <div className={`flex ${
-      message.role === 'user' ? 'justify-end' : 'justify-start'
-    }`}>
-      <div className={`max-w-[85%] ${
-        message.role === 'user' 
-          ? 'bg-[#2c2c2c] dark:bg-[#424242] text-white rounded-2xl rounded-br-md' 
-          : 'bg-white dark:bg-[#424242] text-[#2c2c2c] dark:text-gray-100 rounded-2xl rounded-bl-md border border-[#e8e6e3] dark:border-[#484848]'
-      } px-4 py-3 shadow-sm`}>
+    <div className="flex justify-center">
+      <div className="w-full max-w-[85%] bg-white dark:bg-[#424242] text-[#2c2c2c] dark:text-gray-100 rounded-2xl rounded-bl-md border border-[#e8e6e3] dark:border-[#484848] px-4 py-3 shadow-sm">
         {/* Message header */}
         <div className="flex items-center gap-2 mb-2">
-          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium ${
-            message.role === 'user' 
-              ? 'bg-white/20 text-white' 
-              : 'bg-[#2c2c2c]/10 dark:bg-white/10 text-[#2c2c2c] dark:text-gray-100'
-          }`}>
-            {message.role === 'user' ? 'Y' : 'M'}
+          <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium bg-[#2c2c2c]/10 dark:bg-white/10 text-[#2c2c2c] dark:text-gray-100">
+            M
           </div>
-          <span className={`text-xs font-medium ${
-            message.role === 'user' 
-              ? 'text-white/80' 
-              : 'text-[#737373] dark:text-gray-400'
-          }`}>
-            {message.role === 'user' ? 'You' : 'MDaude'}
+          <span className="text-xs font-medium text-[#737373] dark:text-gray-400">
+            MDaude
           </span>
         </div>
         {/* Message content */}
         <div className="prose prose-sm max-w-none">
-          <ReactMarkdown 
+          <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkBreaks]}
             components={markdownComponents}
           >
