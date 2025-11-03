@@ -1,7 +1,10 @@
 import type { MediaFile } from "../types/mediaViewer";
 
 export const isFileSystemSupported = (): boolean => {
-  return 'showDirectoryPicker' in window;
+  return (
+    typeof window !== 'undefined' &&
+    'showDirectoryPicker' in window
+  );
 };
 
 export const selectDirectory = async (): Promise<FileSystemDirectoryHandle> => {

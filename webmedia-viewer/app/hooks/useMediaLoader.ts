@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { MediaFile } from "../types/mediaViewer";
 import {
   selectDirectory,
@@ -20,7 +20,7 @@ export const useMediaLoader = () => {
     };
   }, [medias]);
 
-  const handleSelectDirectory = async () => {
+  const handleSelectDirectory = useCallback(async () => {
     try {
       setError(null);
       setLoading(true);
@@ -49,7 +49,7 @@ export const useMediaLoader = () => {
       }
       setLoading(false);
     }
-  };
+  }, []);
 
   return {
     medias,

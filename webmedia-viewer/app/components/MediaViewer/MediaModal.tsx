@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { MediaFile, Settings } from "../../types/mediaViewer";
 import { NavigationButton } from "./NavigationButton";
 
@@ -11,7 +12,7 @@ interface MediaModalProps {
   onNext: () => void;
 }
 
-export const MediaModal = ({
+const MediaModalComponent = ({
   media,
   currentIndex,
   totalMedia,
@@ -91,3 +92,5 @@ export const MediaModal = ({
     </div>
   );
 };
+
+export const MediaModal = memo(MediaModalComponent);

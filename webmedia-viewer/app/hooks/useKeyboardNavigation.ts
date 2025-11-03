@@ -14,7 +14,7 @@ export const useKeyboardNavigation = ({
   onArrowRight,
 }: UseKeyboardNavigationProps) => {
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || typeof window === 'undefined') return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {

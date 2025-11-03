@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { Settings } from "../../types/mediaViewer";
 
 interface SettingsDropdownProps {
@@ -5,7 +6,7 @@ interface SettingsDropdownProps {
   onSettingChange: (key: keyof Settings, value: boolean) => void;
 }
 
-export const SettingsDropdown = ({
+const SettingsDropdownComponent = ({
   settings,
   onSettingChange,
 }: SettingsDropdownProps) => {
@@ -48,3 +49,5 @@ export const SettingsDropdown = ({
     </div>
   );
 };
+
+export const SettingsDropdown = memo(SettingsDropdownComponent);

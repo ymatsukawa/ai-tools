@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import type { Settings } from "../../types/mediaViewer";
 import { SettingsDropdown } from "./SettingsDropdown";
 import { ProgressBar } from "./ProgressBar";
@@ -14,7 +14,7 @@ interface TopBarProps {
   onSettingChange: (key: keyof Settings, value: boolean) => void;
 }
 
-export const TopBar = ({
+const TopBarComponent = ({
   directoryName,
   mediaCount,
   loading,
@@ -25,9 +25,17 @@ export const TopBar = ({
 }: TopBarProps) => {
   const [showSettings, setShowSettings] = useState(false);
 
+  const handleClickOutside = useCallback(() => {
+    setShowSettings(false);
+  }, []);
+
+  const toggleSettings = useCallback(() => {
+    setShowSettings((prev) => !prev);
+  }, []);
+
   useClickOutside({
     isActive: showSettings,
-    onClickOutside: () => setShowSettings(false),
+    onClickOutside: handleClickOutside,
     excludeSelectors: ['.settings-dropdown', '.settings-button'],
   });
 
@@ -55,7 +63,7 @@ export const TopBar = ({
 
           <div className="relative">
             <button
-              onClick={() => setShowSettings(!showSettings)}
+              onClick={toggleSettings}
               className="settings-button p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               title="Settings"
             >
@@ -94,3 +102,5 @@ export const TopBar = ({
     </header>
   );
 };
+
+export const TopBar = memo(TopBarComponent);

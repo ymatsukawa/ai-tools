@@ -1,8 +1,10 @@
+import { memo } from "react";
+
 interface ProgressBarProps {
   progress: number;
 }
 
-export const ProgressBar = ({ progress }: ProgressBarProps) => {
+const ProgressBarComponent = ({ progress }: ProgressBarProps) => {
   return (
     <div className="h-1 bg-gray-200">
       <div
@@ -12,3 +14,5 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
     </div>
   );
 };
+
+export const ProgressBar = memo(ProgressBarComponent);

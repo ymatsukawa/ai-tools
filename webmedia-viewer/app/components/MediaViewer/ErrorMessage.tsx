@@ -1,8 +1,10 @@
+import { memo } from "react";
+
 interface ErrorMessageProps {
   message: string;
 }
 
-export const ErrorMessage = ({ message }: ErrorMessageProps) => {
+const ErrorMessageComponent = ({ message }: ErrorMessageProps) => {
   return (
     <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
       <div className="flex items-start gap-3">
@@ -27,3 +29,5 @@ export const ErrorMessage = ({ message }: ErrorMessageProps) => {
     </div>
   );
 };
+
+export const ErrorMessage = memo(ErrorMessageComponent);

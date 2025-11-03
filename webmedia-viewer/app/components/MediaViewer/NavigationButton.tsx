@@ -1,9 +1,11 @@
+import { memo } from "react";
+
 interface NavigationButtonProps {
   direction: 'prev' | 'next';
   onClick: () => void;
 }
 
-export const NavigationButton = ({
+const NavigationButtonComponent = ({
   direction,
   onClick,
 }: NavigationButtonProps) => {
@@ -41,3 +43,5 @@ export const NavigationButton = ({
     </button>
   );
 };
+
+export const NavigationButton = memo(NavigationButtonComponent);

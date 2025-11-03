@@ -1,4 +1,6 @@
-export const EmptyState = () => {
+import { memo } from "react";
+
+const EmptyStateComponent = () => {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center max-w-2xl mx-auto">
       <svg
@@ -52,3 +54,5 @@ export const EmptyState = () => {
     </div>
   );
 };
+
+export const EmptyState = memo(EmptyStateComponent);

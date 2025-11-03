@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import type { Settings } from "../types/mediaViewer";
 import { getCookie, setCookie } from "../utils/cookies";
 
@@ -23,11 +23,16 @@ const saveSettings = (settings: Settings) => {
 export const useSettings = () => {
   const [settings, setSettings] = useState<Settings>(loadSettings());
 
-  const updateSetting = (key: keyof Settings, value: boolean) => {
-    const newSettings = { ...settings, [key]: value };
-    setSettings(newSettings);
-    saveSettings(newSettings);
-  };
+  const updateSetting = useCallback((
+    key: keyof Settings,
+    value: boolean
+  ) => {
+    setSettings((prevSettings) => {
+      const newSettings = { ...prevSettings, [key]: value };
+      saveSettings(newSettings);
+      return newSettings;
+    });
+  }, []);
 
   return { settings, updateSetting };
 };

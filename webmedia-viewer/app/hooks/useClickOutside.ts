@@ -12,7 +12,7 @@ export const useClickOutside = ({
   excludeSelectors,
 }: UseClickOutsideProps) => {
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || typeof document === 'undefined') return;
 
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
