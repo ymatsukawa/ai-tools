@@ -1,0 +1,8 @@
+package cli
+
+func pathArg(args []string) string {
+	if len(args) > 0 {
+		return args[0]
+	}
+	return "."
+}
