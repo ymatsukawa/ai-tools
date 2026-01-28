@@ -23,6 +23,33 @@ export const loadSelectedFont = (): string => {
   }
 };
 
+export const saveSplitLevel = (level: number): void => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('mdaude-split-level', String(level));
+    }
+  } catch (error) {
+    console.warn('Failed to save split level to localStorage:', error);
+  }
+};
+
+export const loadSplitLevel = (): number => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const saved = localStorage.getItem('mdaude-split-level');
+      if (saved) {
+        const level = parseInt(saved, 10);
+        if (level >= 1 && level <= 6) return level;
+      }
+      return 1;
+    }
+    return 1;
+  } catch (error) {
+    console.warn('Failed to load split level from localStorage:', error);
+    return 1;
+  }
+};
+
 export const logFileChange = (changeInfo: {
   timeChanged: boolean;
   sizeChanged: boolean;

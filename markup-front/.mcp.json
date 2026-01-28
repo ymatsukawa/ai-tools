@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context=claude-code",
+        "--project-from-cwd"
+      ],
+      "env": {}
+    },
+    "why-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "~/UserLib/why-mcp"
+      ]
+    }
+  }
+}

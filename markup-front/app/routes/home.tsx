@@ -15,6 +15,7 @@ import { createFileMessage, createAssistantMessage } from "../entities/file/mode
 import { useFileOperations } from "../features/file-operations/hooks";
 import { useContentEditing } from "../features/content-editing/hooks";
 import { useSettings } from "../features/settings/hooks";
+import { useSectionPaging } from "../features/section-paging/hooks";
 
 
 export function meta({ }: Route.MetaArgs) {
@@ -38,7 +39,28 @@ export default function Home() {
   const [fileSize, setFileSize] = useState<number>(0);
 
   // Feature hooks
-  const { showSettings, selectedFont, handleSettingsClose, handleSettingsOpen, handleFontChange } = useSettings();
+  const { showSettings, selectedFont, splitLevel, handleSettingsClose, handleSettingsOpen, handleFontChange, handleSplitLevelChange } = useSettings();
+
+  // Section paging
+  const {
+    currentSection,
+    currentPageIndex,
+    totalPages,
+    hasPrev,
+    hasNext,
+    goNext,
+    goPrev,
+  } = useSectionPaging(currentFileContent, splitLevel);
+
+  // Derive display messages: replace assistant content with current section
+  const displayMessages = useMemo(() => {
+    if (totalPages <= 1) return messages;
+    return messages.map(msg =>
+      msg.role === 'assistant'
+        ? { ...msg, content: currentSection.content }
+        : msg
+    );
+  }, [messages, totalPages, currentSection.content]);
 
   // Memoize font options to prevent re-creation
   const memoizedFontOptions = useMemo(() => fontOptions, []);
@@ -194,14 +216,69 @@ export default function Home() {
           </Suspense>
         ) : (
           <div>
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-2 border-b border-[#e8e6e3] dark:border-[#484848]">
+                <button
+                  onClick={goPrev}
+                  disabled={!hasPrev}
+                  className="p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#f0efed] dark:hover:bg-[#3a3a3a] text-[#4a4a4a] dark:text-gray-300"
+                  title="Previous"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <span className="text-xs text-[#4a4a4a] dark:text-gray-400">
+                  {currentSection.title && <span className="font-medium mr-2">{currentSection.title}</span>}
+                  {currentPageIndex + 1} / {totalPages}
+                </span>
+                <button
+                  onClick={goNext}
+                  disabled={!hasNext}
+                  className="p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#f0efed] dark:hover:bg-[#3a3a3a] text-[#4a4a4a] dark:text-gray-300"
+                  title="Next"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
             <Suspense fallback={<div className="flex-1 flex items-center justify-center">
               <div className="text-gray-400">Loading messages...</div>
             </div>}>
               <Messages
-                messages={messages}
+                messages={displayMessages}
                 selectedFont={selectedFont}
               />
             </Suspense>
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-2 border-t border-[#e8e6e3] dark:border-[#484848]">
+                <button
+                  onClick={goPrev}
+                  disabled={!hasPrev}
+                  className="p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#f0efed] dark:hover:bg-[#3a3a3a] text-[#4a4a4a] dark:text-gray-300"
+                  title="Previous"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <span className="text-xs text-[#4a4a4a] dark:text-gray-400">
+                  {currentPageIndex + 1} / {totalPages}
+                </span>
+                <button
+                  onClick={goNext}
+                  disabled={!hasNext}
+                  className="p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#f0efed] dark:hover:bg-[#3a3a3a] text-[#4a4a4a] dark:text-gray-300"
+                  title="Next"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
             <div style={{ height: '33vh' }} />
           </div>
         )}
@@ -213,8 +290,10 @@ export default function Home() {
           showSettings={showSettings}
           selectedFont={selectedFont}
           fontOptions={memoizedFontOptions}
+          splitLevel={splitLevel}
           onClose={handleSettingsClose}
           onFontChange={handleFontChange}
+          onSplitLevelChange={handleSplitLevelChange}
         />
       </Suspense>
     </div>

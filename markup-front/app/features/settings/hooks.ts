@@ -1,24 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
-import { loadSelectedFont, saveSelectedFont } from '../../shared/lib/utils';
+import { loadSelectedFont, saveSelectedFont, loadSplitLevel, saveSplitLevel } from '../../shared/lib/utils';
 import { loadFont } from '../../shared/lib/fontLoader';
 import { fontOptions } from '../../shared/config/fonts';
 
 export function useSettings() {
   const [showSettings, setShowSettings] = useState(false);
   const [selectedFont, setSelectedFont] = useState("Inter");
+  const [splitLevel, setSplitLevel] = useState(1);
 
-  // Load saved font on mount
+  // Load saved font and split level on mount
   useEffect(() => {
     const loadedFont = loadSelectedFont();
     const isValidFont = fontOptions.some(option => option.value === loadedFont);
     if (isValidFont) {
       setSelectedFont(loadedFont);
-      // Dynamically load the font
       loadFont(loadedFont);
     } else {
-      // Load default font
       loadFont("Inter");
     }
+
+    const loadedSplitLevel = loadSplitLevel();
+    setSplitLevel(loadedSplitLevel);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only on mount
 
@@ -33,15 +35,21 @@ export function useSettings() {
   const handleFontChange = useCallback((newFont: string): void => {
     setSelectedFont(newFont);
     saveSelectedFont(newFont);
-    // Dynamically load the selected font
     loadFont(newFont);
+  }, []);
+
+  const handleSplitLevelChange = useCallback((level: number): void => {
+    setSplitLevel(level);
+    saveSplitLevel(level);
   }, []);
 
   return {
     showSettings,
     selectedFont,
+    splitLevel,
     handleSettingsClose,
     handleSettingsOpen,
-    handleFontChange
+    handleFontChange,
+    handleSplitLevelChange
   };
 }
