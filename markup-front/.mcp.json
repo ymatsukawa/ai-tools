@@ -12,13 +12,6 @@
         "--project-from-cwd"
       ],
       "env": {}
-    },
-    "why-mcp": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "~/UserLib/why-mcp"
-      ]
     }
   }
 }
