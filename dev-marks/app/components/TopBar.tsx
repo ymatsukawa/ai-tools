@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useAutoHideOnScroll } from "../hooks/useAutoHideOnScroll";
 
 type Props = {
@@ -10,8 +9,6 @@ type Props = {
 export function TopBar({ fileName, onLoad, onSettings }: Props) {
   const visible = useAutoHideOnScroll();
   const hasFile = fileName !== null;
-  const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
 
   return (
     <header
@@ -39,27 +36,51 @@ export function TopBar({ fileName, onLoad, onSettings }: Props) {
           margin: "0 auto",
         }}
       >
-        <a
-          href="/"
-          aria-label="Dev Marks home"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.7rem",
-            textDecoration: "none",
-            color: "inherit",
-            minWidth: 0,
-          }}
-        >
-          <span className="logo-block" aria-hidden="true">
-            DM
-          </span>
-          <span className="wordmark topbar__wordmark" aria-hidden="true">
-            <span>DEV</span>
-            <span className="wordmark__accent">/</span>
-            <span>MARKS</span>
-          </span>
-        </a>
+        {hasFile ? (
+          <div
+            aria-label="Dev Marks"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.7rem",
+              color: "inherit",
+              minWidth: 0,
+              cursor: "default",
+              userSelect: "none",
+            }}
+          >
+            <span className="logo-block logo-block--static" aria-hidden="true">
+              DM
+            </span>
+            <span className="wordmark topbar__wordmark" aria-hidden="true">
+              <span>DEV</span>
+              <span className="wordmark__accent">/</span>
+              <span>MARKS</span>
+            </span>
+          </div>
+        ) : (
+          <a
+            href="/"
+            aria-label="Dev Marks home"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.7rem",
+              textDecoration: "none",
+              color: "inherit",
+              minWidth: 0,
+            }}
+          >
+            <span className="logo-block" aria-hidden="true">
+              DM
+            </span>
+            <span className="wordmark topbar__wordmark" aria-hidden="true">
+              <span>DEV</span>
+              <span className="wordmark__accent">/</span>
+              <span>MARKS</span>
+            </span>
+          </a>
+        )}
 
         {hasFile ? (
           <span
@@ -87,57 +108,21 @@ export function TopBar({ fileName, onLoad, onSettings }: Props) {
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
           {hasFile ? (
-            <div
-              className="topbar__reactions"
-              style={{
-                display: "inline-flex",
-                gap: "0.4rem",
-                paddingRight: "0.55rem",
-                marginRight: "0.15rem",
-                borderRight: "1px solid var(--rule-soft)",
-              }}
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="reaction reaction--compact"
+              aria-label="Print"
+              title="Print"
+              style={{ marginRight: "0.15rem" }}
             >
-              <button
-                type="button"
-                onClick={() => setLiked((v) => !v)}
-                className={`reaction reaction--compact ${liked ? "reaction--liked" : ""}`}
-                aria-pressed={liked}
-                aria-label={liked ? "Unlike" : "Like"}
-                title={liked ? "Liked" : "Like"}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-                <span className="reaction__label">{liked ? "Liked" : "Like"}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setSaved((v) => !v)}
-                className={`reaction reaction--compact ${saved ? "reaction--saved" : ""}`}
-                aria-pressed={saved}
-                aria-label={saved ? "Unsave" : "Save"}
-                title={saved ? "Saved" : "Save"}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill={saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                </svg>
-                <span className="reaction__label">{saved ? "Saved" : "Save"}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="reaction reaction--compact"
-                aria-label="Print"
-                title="Print"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M6 9V2h12v7" />
-                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                  <rect x="6" y="14" width="12" height="8" rx="1" />
-                </svg>
-                <span className="reaction__label">Print</span>
-              </button>
-            </div>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 9V2h12v7" />
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <rect x="6" y="14" width="12" height="8" rx="1" />
+              </svg>
+              <span className="reaction__label">Print</span>
+            </button>
           ) : null}
 
           <button type="button" onClick={onLoad} className="btn btn--mint" aria-label="Open a markdown file">

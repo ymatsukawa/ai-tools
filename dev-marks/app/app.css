@@ -247,10 +247,23 @@ body {
 /* lists */
 .prose ul,
 .prose ol {
-  padding-left: 1.4em;
+  padding-left: 1.5em;
+}
+.prose ul {
+  list-style: disc outside;
+}
+.prose ol {
+  list-style: decimal outside;
+}
+.prose ul ul {
+  list-style: circle outside;
+}
+.prose ul ul ul {
+  list-style: square outside;
 }
 .prose ul > li::marker {
   color: var(--primary);
+  font-size: 1.05em;
 }
 .prose ol > li::marker {
   color: var(--primary);
@@ -510,6 +523,17 @@ body {
 }
 .logo-block:hover::after {
   opacity: 1;
+}
+/* non-interactive variant — used after a file is loaded */
+.logo-block--static,
+.logo-block--static:hover {
+  transform: none;
+  background: var(--ink);
+  color: var(--paper);
+}
+.logo-block--static::after,
+.logo-block--static:hover::after {
+  opacity: 0;
 }
 
 .wordmark {
