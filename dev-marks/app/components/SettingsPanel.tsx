@@ -35,12 +35,11 @@ const THEME_LABEL: Record<ThemeKey, string> = {
   sepia: "Sepia",
   dark: "Dark",
 };
-
 const THEME_CHIP: Record<ThemeKey, string> = {
-  auto: "linear-gradient(135deg,#faf6ec 0% 50%,#14110d 50% 100%)",
-  light: "#faf6ec",
-  sepia: "#efe1c0",
-  dark: "#14110d",
+  auto: "linear-gradient(135deg,#ffffff 0% 50%,#0c0c0c 50% 100%)",
+  light: "#ffffff",
+  sepia: "#fbf6ec",
+  dark: "#0c0c0c",
 };
 
 export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Props) {
@@ -57,7 +56,6 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
 
   return (
     <div className="no-print" role="dialog" aria-modal="true" aria-label="Reader settings">
-      {/* backdrop */}
       <button
         type="button"
         onClick={onClose}
@@ -66,7 +64,9 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
         style={{
           position: "fixed",
           inset: 0,
-          background: "color-mix(in srgb, var(--ink) 25%, transparent)",
+          background: "color-mix(in srgb, var(--ink) 35%, transparent)",
+          backdropFilter: "blur(2px)",
+          WebkitBackdropFilter: "blur(2px)",
           border: 0,
           padding: 0,
           cursor: "default",
@@ -74,7 +74,6 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
         }}
       />
 
-      {/* panel */}
       <aside
         className="anim-slide-in"
         style={{
@@ -82,10 +81,10 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
           top: 0,
           right: 0,
           height: "100dvh",
-          width: "min(420px, 100vw)",
+          width: "min(440px, 100vw)",
           background: "var(--paper)",
           borderLeft: "1px solid var(--rule-soft)",
-          boxShadow: "-12px 0 40px -20px color-mix(in srgb, var(--ink) 35%, transparent)",
+          boxShadow: "var(--shadow-lg)",
           zIndex: 60,
           overflow: "auto",
           display: "flex",
@@ -97,41 +96,49 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "1.2rem 1.5rem",
+            padding: "1.1rem 1.4rem",
             borderBottom: "1px solid var(--rule-soft)",
             position: "sticky",
             top: 0,
-            background: "var(--paper)",
+            background: "color-mix(in srgb, var(--paper) 92%, transparent)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
             zIndex: 1,
           }}
         >
           <span
             style={{
               fontFamily: "var(--font-display)",
-              fontWeight: 700,
+              fontWeight: 800,
               fontSize: "1.05rem",
-              letterSpacing: "0.02em",
+              letterSpacing: "-0.02em",
+              display: "inline-flex",
+              alignItems: "baseline",
+              gap: "0.35em",
             }}
           >
-            Reader settings
+            <span style={{ color: "var(--primary)", fontWeight: 800 }}>#</span>
+            settings
           </span>
           <button
             type="button"
             onClick={onClose}
-            className="chrome-button chrome-button--icon chrome-button--ghost"
+            className="btn btn--ghost btn--icon"
+            style={{ height: "32px", width: "32px" }}
             aria-label="Close"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
           </button>
         </div>
 
-        <div style={{ padding: "1.4rem 1.5rem 2rem", display: "flex", flexDirection: "column", gap: "1.8rem" }}>
-          {/* Font */}
+        <div style={{ padding: "1.4rem 1.4rem 2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
           <section>
-            <h3 className="section-label">Typeface</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.55rem" }}>
+            <h3 className="section-label">
+              <span className="section-label__hash">#</span> typeface
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
               {FONTS.map((f) => (
                 <button
                   key={f}
@@ -149,9 +156,10 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
             </div>
           </section>
 
-          {/* Size */}
           <section>
-            <h3 className="section-label">Size</h3>
+            <h3 className="section-label">
+              <span className="section-label__hash">#</span> size
+            </h3>
             <div className="segmented" role="group" aria-label="Font size">
               {SIZES.map((s) => (
                 <button
@@ -166,9 +174,10 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
             </div>
           </section>
 
-          {/* Leading */}
           <section>
-            <h3 className="section-label">Line height</h3>
+            <h3 className="section-label">
+              <span className="section-label__hash">#</span> line height
+            </h3>
             <div className="segmented" role="group" aria-label="Line height">
               {LEADINGS.map((l) => (
                 <button
@@ -183,9 +192,10 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
             </div>
           </section>
 
-          {/* Theme */}
           <section>
-            <h3 className="section-label">Theme</h3>
+            <h3 className="section-label">
+              <span className="section-label__hash">#</span> theme
+            </h3>
             <div className="swatchrow" role="group" aria-label="Theme">
               {THEMES.map((t) => (
                 <button
@@ -218,20 +228,26 @@ export function SettingsPanel({ open, onClose, settings, onChange, onReset }: Pr
           >
             <span
               style={{
-                fontFamily: "var(--font-prose-mono)",
-                fontSize: "0.65rem",
-                letterSpacing: "0.16em",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.4em",
+                fontFamily: "var(--font-display)",
+                fontSize: "0.76rem",
+                fontWeight: 600,
                 color: "var(--ink-muted)",
-                textTransform: "uppercase",
               }}
             >
-              Saved locally
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              Saved on this device
             </span>
             <button
               type="button"
               onClick={onReset}
-              className="chrome-button chrome-button--ghost"
-              style={{ height: "30px", fontSize: "0.65rem" }}
+              className="btn btn--ghost"
+              style={{ height: "32px", padding: "0 0.85rem", fontSize: "0.78rem" }}
             >
               Reset
             </button>

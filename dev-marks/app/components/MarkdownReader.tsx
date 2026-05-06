@@ -1,11 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TopBar } from "./TopBar";
 import { EmptyState } from "./EmptyState";
 import { SettingsPanel } from "./SettingsPanel";
 import { MarkdownView } from "./MarkdownView";
 import { TOC } from "./TOC";
+import { ArticleHeader } from "./ArticleHeader";
 import { useSettings } from "../hooks/useSettings";
 import { extractHeadings, type HeadingItem } from "../lib/headings";
+
+function splitTitle(source: string): { title: string; rest: string } {
+  // strip a leading H1 ("# Title") and use it as the article title
+  const match = source.match(/^\s*#\s+(.+?)\s*\n+/);
+  if (!match) return { title: "", rest: source };
+  return { title: match[1].trim(), rest: source.slice(match[0].length) };
+}
 
 export function MarkdownReader() {
   const [markdown, setMarkdown] = useState<string | null>(null);
@@ -32,17 +40,19 @@ export function MarkdownReader() {
       window.scrollTo({ top: 0, behavior: "auto" });
     };
     reader.readAsText(file);
-    // allow re-selecting the same file
     e.target.value = "";
   }, []);
 
-  // re-extract headings whenever rendered markdown changes
+  const { title, rest } = useMemo(
+    () => (markdown ? splitTitle(markdown) : { title: "", rest: "" }),
+    [markdown]
+  );
+
   useEffect(() => {
     if (!markdown) {
       setHeadings([]);
       return;
     }
-    // wait one frame for ReactMarkdown to commit
     const id = requestAnimationFrame(() => {
       setHeadings(extractHeadings(proseRef.current));
     });
@@ -66,8 +76,6 @@ export function MarkdownReader() {
       ) : (
         <main
           style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1fr)",
             padding: "clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem) 6rem",
             maxWidth: "1280px",
             margin: "0 auto",
@@ -75,14 +83,19 @@ export function MarkdownReader() {
           }}
         >
           <div
+            className="reader-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "1fr",
               gap: "3rem",
+              alignItems: "start",
             }}
-            className="reader-grid"
           >
-            <MarkdownView ref={proseRef} source={markdown} theme={resolved} />
+            <div>
+              <ArticleHeader fileName={fileName ?? "untitled.md"} title={title} />
+              <MarkdownView ref={proseRef} source={rest} theme={resolved} />
+              <Footer fileName={fileName ?? "untitled.md"} />
+            </div>
             <aside
               className="reader-toc"
               style={{
@@ -92,21 +105,19 @@ export function MarkdownReader() {
                 maxHeight: "calc(100dvh - 100px)",
                 overflow: "auto",
                 display: "none",
+                paddingTop: "0.4rem",
               }}
             >
               <TOC headings={headings} />
             </aside>
           </div>
-
-          <Footer fileName={fileName} markdown={markdown} />
         </main>
       )}
 
-      {/* Layout: show TOC alongside on lg+ */}
       <style>{`
         @media (min-width: 1100px) {
           .reader-grid {
-            grid-template-columns: minmax(0, 1fr) 14rem !important;
+            grid-template-columns: minmax(0, 1fr) 15rem !important;
           }
           .reader-toc { display: block !important; }
         }
@@ -120,39 +131,57 @@ export function MarkdownReader() {
         onReset={reset}
       />
 
-      {/* prevent flash before hydration */}
-      {!hydrated ? <div style={{ position: "fixed", inset: 0, background: "var(--paper)", zIndex: 100, pointerEvents: "none", opacity: 0 }} /> : null}
+      {!hydrated ? (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "var(--paper)",
+            zIndex: 100,
+            pointerEvents: "none",
+            opacity: 0,
+          }}
+        />
+      ) : null}
     </div>
   );
 }
 
-function Footer({ fileName, markdown }: { fileName: string | null; markdown: string }) {
-  const words = markdown.trim().split(/\s+/).filter(Boolean).length;
-  const minutes = Math.max(1, Math.round(words / 220));
+function Footer({ fileName }: { fileName: string }) {
   return (
     <footer
       className="no-print"
       style={{
-        marginTop: "5rem",
-        paddingTop: "1.4rem",
+        marginTop: "4rem",
+        paddingTop: "1.6rem",
         borderTop: "1px solid var(--rule-soft)",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        flexWrap: "wrap",
         gap: "1rem",
-        fontFamily: "var(--font-prose-mono)",
-        fontSize: "0.7rem",
-        letterSpacing: "0.12em",
-        textTransform: "uppercase",
+        fontFamily: "var(--font-display)",
+        fontSize: "0.8rem",
         color: "var(--ink-muted)",
-        maxWidth: "68ch",
+        maxWidth: "720px",
         marginInline: "auto",
         width: "100%",
       }}
     >
-      <span>{fileName ?? "untitled.md"}</span>
-      <span>
-        {words.toLocaleString()} words · {minutes} min
+      <span style={{ fontFamily: "var(--font-prose-mono)", fontSize: "0.78rem" }}>
+        {fileName}
+      </span>
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4em" }}>
+        Read on
+        <span
+          style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 800,
+            color: "var(--ink)",
+          }}
+        >
+          DEV<span style={{ color: "var(--primary)" }}>/</span>MARKS
+        </span>
       </span>
     </footer>
   );

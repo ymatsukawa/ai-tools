@@ -20,15 +20,15 @@ export const DEFAULTS: Settings = {
 export const STORAGE_KEY = "dev-marks:settings";
 
 export const FONT_STACKS: Record<FontKey, string> = {
-  sans: '"Geist", ui-sans-serif, system-ui, sans-serif',
-  serif: '"Source Serif 4", "Charter", Georgia, ui-serif, serif',
+  sans: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
+  serif: '"Newsreader", "Charter", Georgia, ui-serif, serif',
   mono: '"JetBrains Mono", ui-monospace, Menlo, monospace',
-  reading: '"Atkinson Hyperlegible", "Source Serif 4", Georgia, serif',
+  reading: '"Atkinson Hyperlegible", "Newsreader", Georgia, serif',
 };
 
 export const FONT_LABELS: Record<FontKey, string> = {
-  sans: "Sans — Geist",
-  serif: "Serif — Source Serif",
+  sans: "Sans — Jakarta",
+  serif: "Serif — Newsreader",
   mono: "Mono — JetBrains",
   reading: "Reading — Atkinson",
 };

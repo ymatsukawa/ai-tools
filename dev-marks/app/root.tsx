@@ -19,7 +19,7 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..800;1,8..60,300..800&family=Geist:wght@300..800&family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap",
   },
 ];
 
@@ -31,7 +31,7 @@ var resolved=t==="auto"?(matchMedia("(prefers-color-scheme: dark)").matches?"dar
 document.documentElement.setAttribute("data-theme",resolved);
 var sizes={s:"15px",m:"17px",l:"19px",xl:"22px"};
 var leadings={tight:"1.45",normal:"1.7",relaxed:"1.9"};
-var fonts={sans:'"Geist",ui-sans-serif,system-ui,sans-serif',serif:'"Source Serif 4","Charter",Georgia,ui-serif,serif',mono:'"JetBrains Mono",ui-monospace,Menlo,monospace',reading:'"Atkinson Hyperlegible","Source Serif 4",Georgia,serif'};
+var fonts={sans:'"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif',serif:'"Newsreader","Charter",Georgia,ui-serif,serif',mono:'"JetBrains Mono",ui-monospace,Menlo,monospace',reading:'"Atkinson Hyperlegible","Newsreader",Georgia,serif'};
 var b=document.body||document.documentElement;
 b.style.setProperty("--reader-font",fonts[s.font]||fonts.sans);
 b.style.setProperty("--reader-size",sizes[s.size]||sizes.m);
