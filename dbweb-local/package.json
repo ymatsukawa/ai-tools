@@ -1,0 +1,42 @@
+{
+  "name": "dbweb-local",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "@codemirror/lang-sql": "^6.10.0",
+    "@react-router/node": "7.16.0",
+    "@react-router/serve": "7.16.0",
+    "@uiw/react-codemirror": "^4.25.10",
+    "better-sqlite3": "^12.10.0",
+    "encoding-japanese": "^2.2.0",
+    "isbot": "^5.1.36",
+    "mermaid": "^11.15.0",
+    "mysql2": "^3.22.5",
+    "node-sql-parser": "^5.4.0",
+    "pg": "^8.21.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-resizable-panels": "^4.11.2",
+    "react-router": "7.16.0",
+    "sql-formatter": "^15.8.1"
+  },
+  "devDependencies": {
+    "@react-router/dev": "7.16.0",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/encoding-japanese": "^2.2.1",
+    "@types/node": "^22",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.3"
+  }
+}
