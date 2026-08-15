@@ -39,7 +39,7 @@ export default function Home() {
   const [fileSize, setFileSize] = useState<number>(0);
 
   // Feature hooks
-  const { showSettings, selectedFont, splitLevel, handleSettingsClose, handleSettingsOpen, handleFontChange, handleSplitLevelChange } = useSettings();
+  const { showSettings, selectedFont, splitLevel, scrMode, handleSettingsClose, handleSettingsOpen, handleFontChange, handleSplitLevelChange, handleScrModeChange } = useSettings();
 
   // Section paging
   const {
@@ -250,6 +250,7 @@ export default function Home() {
               <Messages
                 messages={displayMessages}
                 selectedFont={selectedFont}
+                scrMode={scrMode}
               />
             </Suspense>
             {totalPages > 1 && (
@@ -291,9 +292,11 @@ export default function Home() {
           selectedFont={selectedFont}
           fontOptions={memoizedFontOptions}
           splitLevel={splitLevel}
+          scrMode={scrMode}
           onClose={handleSettingsClose}
           onFontChange={handleFontChange}
           onSplitLevelChange={handleSplitLevelChange}
+          onScrModeChange={handleScrModeChange}
         />
       </Suspense>
     </div>

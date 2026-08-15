@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { loadSelectedFont, saveSelectedFont, loadSplitLevel, saveSplitLevel } from '../../shared/lib/utils';
+import { loadSelectedFont, saveSelectedFont, loadSplitLevel, saveSplitLevel, loadScrMode, saveScrMode } from '../../shared/lib/utils';
 import { loadFont } from '../../shared/lib/fontLoader';
 import { fontOptions } from '../../shared/config/fonts';
 
@@ -7,6 +7,7 @@ export function useSettings() {
   const [showSettings, setShowSettings] = useState(false);
   const [selectedFont, setSelectedFont] = useState("Inter");
   const [splitLevel, setSplitLevel] = useState(1);
+  const [scrMode, setScrMode] = useState(false);
 
   // Load saved font and split level on mount
   useEffect(() => {
@@ -21,6 +22,8 @@ export function useSettings() {
 
     const loadedSplitLevel = loadSplitLevel();
     setSplitLevel(loadedSplitLevel);
+
+    setScrMode(loadScrMode());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only on mount
 
@@ -43,13 +46,20 @@ export function useSettings() {
     saveSplitLevel(level);
   }, []);
 
+  const handleScrModeChange = useCallback((next: boolean): void => {
+    setScrMode(next);
+    saveScrMode(next);
+  }, []);
+
   return {
     showSettings,
     selectedFont,
     splitLevel,
+    scrMode,
     handleSettingsClose,
     handleSettingsOpen,
     handleFontChange,
-    handleSplitLevelChange
+    handleSplitLevelChange,
+    handleScrModeChange
   };
 }

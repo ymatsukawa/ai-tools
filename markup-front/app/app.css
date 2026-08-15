@@ -43,8 +43,223 @@ body {
   ::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.2);
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Source Code Reading (SCR) mode — GitHub README style.
+   Unlayered rules here win over Tailwind utilities regardless of specificity. */
+.scr-mode {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.5;
+  color: #24292f;
+  word-wrap: break-word;
+}
+
+.scr-mode p,
+.scr-mode li {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.5;
+  color: inherit;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.scr-mode li {
+  margin-bottom: 4px;
+}
+
+.scr-mode h1,
+.scr-mode h2,
+.scr-mode h3,
+.scr-mode h4,
+.scr-mode h5,
+.scr-mode h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.scr-mode h1 {
+  font-size: 2em;
+  padding-bottom: .3em;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.scr-mode h2 {
+  font-size: 1.5em;
+  padding-bottom: .3em;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.scr-mode h3 { font-size: 1.25em; }
+.scr-mode h4 { font-size: 1em; }
+.scr-mode h5 { font-size: .875em; }
+.scr-mode h6 { font-size: .85em; color: #656d76; }
+
+.scr-mode ul,
+.scr-mode ol {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.scr-mode ul { list-style: disc; }
+.scr-mode ol { list-style: decimal; }
+
+.scr-mode a {
+  color: #0969da;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+.scr-mode a:hover {
+  text-decoration: underline;
+}
+
+.scr-mode blockquote {
+  margin: 0 0 16px 0;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: .25em solid #d0d7de;
+  font-style: normal;
+  opacity: 1;
+}
+
+.scr-mode code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  font-size: 85%;
+  padding: .2em .4em;
+  margin: 0;
+  background-color: rgba(175, 184, 193, 0.2);
+  border-radius: 6px;
+  color: inherit;
+  border: 0;
+}
+
+.scr-mode pre {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  font-size: 85%;
+  line-height: 1.45;
+  padding: 16px;
+  overflow: auto;
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  margin-top: 0;
+  margin-bottom: 16px;
+  border: 0;
+}
+
+.scr-mode pre code {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  white-space: pre;
+  word-break: normal;
+}
+
+.scr-mode hr {
+  height: .25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: #d0d7de;
+  border: 0;
+}
+
+.scr-mode table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow: auto;
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.scr-mode table th,
+.scr-mode table td {
+  padding: 6px 13px;
+  border: 1px solid #d0d7de;
+  background-color: transparent;
+}
+
+.scr-mode table th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+.scr-mode table tr:nth-child(2n) td {
+  background-color: #f6f8fa;
+}
+
+.scr-mode img {
+  max-width: 100%;
+  box-sizing: content-box;
+  background-color: #ffffff;
+}
+
+/* SCR dark mode — GitHub dark palette */
+@media (prefers-color-scheme: dark) {
+  .scr-mode {
+    color: #e6edf3;
+  }
+
+  .scr-mode h1,
+  .scr-mode h2 {
+    border-bottom-color: #30363d;
+  }
+
+  .scr-mode h6 {
+    color: #8b949e;
+  }
+
+  .scr-mode a {
+    color: #2f81f7;
+  }
+
+  .scr-mode blockquote {
+    color: #8b949e;
+    border-left-color: #30363d;
+  }
+
+  .scr-mode code {
+    background-color: rgba(110, 118, 129, 0.4);
+  }
+
+  .scr-mode pre {
+    background-color: #161b22;
+  }
+
+  .scr-mode hr {
+    background-color: #30363d;
+  }
+
+  .scr-mode table th,
+  .scr-mode table td {
+    border-color: #30363d;
+  }
+
+  .scr-mode table th {
+    background-color: #161b22;
+  }
+
+  .scr-mode table tr:nth-child(2n) td {
+    background-color: #161b22;
+  }
+
+  .scr-mode img {
+    background-color: #0d1117;
   }
 }

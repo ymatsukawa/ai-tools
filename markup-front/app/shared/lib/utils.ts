@@ -50,6 +50,28 @@ export const loadSplitLevel = (): number => {
   }
 };
 
+export const saveScrMode = (enabled: boolean): void => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('mdaude-scr-mode', enabled ? 'true' : 'false');
+    }
+  } catch (error) {
+    console.warn('Failed to save SCR mode to localStorage:', error);
+  }
+};
+
+export const loadScrMode = (): boolean => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('mdaude-scr-mode') === 'true';
+    }
+    return false;
+  } catch (error) {
+    console.warn('Failed to load SCR mode from localStorage:', error);
+    return false;
+  }
+};
+
 export const logFileChange = (changeInfo: {
   timeChanged: boolean;
   sizeChanged: boolean;

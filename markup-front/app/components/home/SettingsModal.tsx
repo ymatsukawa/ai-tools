@@ -1,16 +1,18 @@
 import { useState } from "react";
 import type { FontOption } from "./types";
 
-type SettingsTab = 'font' | 'splitPage';
+type SettingsTab = 'font' | 'splitPage' | 'display';
 
 interface SettingsModalProps {
   showSettings: boolean;
   selectedFont: string;
   fontOptions: FontOption[];
   splitLevel: number;
+  scrMode: boolean;
   onClose: () => void;
   onFontChange: (font: string) => void;
   onSplitLevelChange: (level: number) => void;
+  onScrModeChange: (enabled: boolean) => void;
 }
 
 const splitLevelOptions = [
@@ -24,9 +26,11 @@ export function SettingsModal({
   selectedFont,
   fontOptions,
   splitLevel,
+  scrMode,
   onClose,
   onFontChange,
-  onSplitLevelChange
+  onSplitLevelChange,
+  onScrModeChange
 }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<SettingsTab>('font');
 
@@ -59,6 +63,12 @@ export function SettingsModal({
               className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${activeTab === 'splitPage' ? 'bg-gray-200 font-medium text-gray-800' : 'text-gray-500 hover:bg-gray-100'}`}
             >
               Split Page
+            </button>
+            <button
+              onClick={() => setActiveTab('display')}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${activeTab === 'display' ? 'bg-gray-200 font-medium text-gray-800' : 'text-gray-500 hover:bg-gray-100'}`}
+            >
+              Display
             </button>
           </div>
         </div>
@@ -113,6 +123,26 @@ export function SettingsModal({
                     <span className="text-sm">{option.label}</span>
                   </label>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'display' && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Display Mode</h3>
+              <div className="space-y-2">
+                <label className="flex items-start p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={scrMode}
+                    onChange={(e) => onScrModeChange(e.target.checked)}
+                    className="mr-3 mt-0.5"
+                  />
+                  <div>
+                    <div className="text-sm font-medium text-gray-800">Source Code Reading (SCR) mode</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Render markdown in GitHub README style.</div>
+                  </div>
+                </label>
               </div>
             </div>
           )}
