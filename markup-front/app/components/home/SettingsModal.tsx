@@ -93,7 +93,7 @@ export function SettingsModal({
                     />
                     <span
                       className="text-sm"
-                      style={{ fontFamily: font.value }}
+                      style={{ fontFamily: font.stack }}
                     >
                       {font.displayName}
                     </span>

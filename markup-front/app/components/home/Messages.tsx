@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import type { Message } from "./types";
+import { getFontStack } from "../../shared/config/fonts";
 
 interface MessagesProps {
   messages: Message[];
@@ -14,19 +15,20 @@ interface MessagesProps {
 const MessageItem = memo(({ message, selectedFont, scrMode, index }: { message: Message; selectedFont: string; scrMode?: boolean; index: number }) => {
   // Memoize the markdown components to prevent recreation on every render
   const markdownComponents = useMemo(() => {
+    const fontFamily = getFontStack(selectedFont);
     if (scrMode) {
       // SCR mode renders default HTML tags without Tailwind classes,
       // so that .scr-mode CSS in app.css is the sole styling source.
       return {};
     }
     return ({
-      p: ({children}: any) => <p className="text-sm leading-[1.6] mb-3 last:mb-0" style={{ fontFamily: selectedFont }}>{children}</p>,
+      p: ({children}: any) => <p className="text-sm leading-[1.6] mb-3 last:mb-0" style={{ fontFamily }}>{children}</p>,
       h1: ({children}: any) => <h1 className="text-xl font-semibold mb-3 mt-4 first:mt-0">{children}</h1>,
       h2: ({children}: any) => <h2 className="text-lg font-semibold mb-2 mt-4 first:mt-0">{children}</h2>,
       h3: ({children}: any) => <h3 className="text-base font-semibold mb-2 mt-3 first:mt-0">{children}</h3>,
       ul: ({children}: any) => <ul className="list-disc pl-4 mb-3 space-y-1">{children}</ul>,
       ol: ({children}: any) => <ol className="list-decimal pl-4 mb-3 space-y-1">{children}</ol>,
-      li: ({children}: any) => <li className="text-sm leading-[1.6]" style={{ fontFamily: selectedFont }}>{children}</li>,
+      li: ({children}: any) => <li className="text-sm leading-[1.6]" style={{ fontFamily }}>{children}</li>,
       blockquote: ({children}: any) => <blockquote className="border-l-3 border-[#e8e6e3] dark:border-[#484848] pl-3 italic my-3 opacity-80">{children}</blockquote>,
       code: ({inline, children}: any) =>
         inline ?

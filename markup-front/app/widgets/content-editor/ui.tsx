@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from 'react';
 import { useSnippets } from '../../features/content-editing/useSnippets';
 import { SnippetDropdown } from './SnippetDropdown';
+import { getFontStack } from '../../shared/config/fonts';
 
 interface ContentEditorProps {
   editContent: string;
@@ -120,7 +121,7 @@ export function ContentEditor({
         onKeyDown={handleKeyDown}
         className="w-full h-full resize-none border-none outline-none bg-white/60 dark:bg-gray-900/60 text-[#2c2c2c] dark:text-gray-100 rounded-lg px-6 py-4 shadow-sm"
         style={{
-          fontFamily: selectedFont,
+          fontFamily: getFontStack(selectedFont),
           paddingBottom: '50vh'
         }}
         autoFocus
