@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -36,7 +38,28 @@ func (v *viewer) setStatus(text string) {
 	v.nameRow.Refresh()
 }
 
+var errDirNotFound = errors.New("ディレクトリが見つかりませんでした")
+
+// startDir は起動引数 (args[1]) のディレクトリを絶対パスにして返す。
+// 相対パスはカレントディレクトリ基準で解決する。
+// 指定なしなら ("", nil)、存在しない・ディレクトリでなければ errDirNotFound。
+func startDir(args []string) (string, error) {
+	if len(args) < 2 || args[1] == "" {
+		return "", nil
+	}
+	abs, err := filepath.Abs(args[1])
+	if err != nil {
+		return "", errDirNotFound
+	}
+	if fi, err := os.Stat(abs); err != nil || !fi.IsDir() {
+		return "", errDirNotFound
+	}
+	return abs, nil
+}
+
 func main() {
+	initialDir, initialErr := startDir(os.Args)
+
 	// フォルダー選択ダイアログが Preferences (最後に開いたフォルダー等) を使うため ID が必要
 	a := app.NewWithID("local.ymatsukawa.pics")
 	w := a.NewWindow("Pics")
@@ -71,9 +94,18 @@ func main() {
 
 	// アプリケーション終了時に確保メモリーを破棄
 	a.Lifecycle().SetOnStopped(v.release)
-	// 起動後、画面の可視領域いっぱいまでウィンドウを広げる
+	// 起動後、画面の可視領域いっぱいまでウィンドウを広げ、
+	// 起動引数のディレクトリがあれば開く (見つからなければエラー表示)
 	a.Lifecycle().SetOnStarted(func() {
-		go fyne.Do(func() { fitToScreen(w) })
+		go fyne.Do(func() {
+			fitToScreen(w)
+			switch {
+			case initialErr != nil:
+				dialog.ShowError(initialErr, w)
+			case initialDir != "":
+				v.loadFolder(initialDir)
+			}
+		})
 	})
 
 	w.Resize(fyne.NewSize(1280, 800))
