@@ -1,0 +1,5 @@
+/pics
+/main
+*.app/
+*.test
+*.out
